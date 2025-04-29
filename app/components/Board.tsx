@@ -199,7 +199,7 @@ const Board = () => {
       // Computer's turn
       computerMove();
     }
-  }, [squares, isXNext, gameMode]);
+  }, [squares, isXNext, gameMode, computerMove, isComputerThinking, isPlayerX]);
 
   let status;
   if (winner) {
