@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #ffe6f2;
+  --foreground: #ff1493;
+  --primary: #ff69b4;
+  --secondary: #ffb6c1;
+  --accent: #ff007f;
+  --border: #ff69b4;
+  --board-bg: #ff80bf;
+  --x-color: #ff1493;
+  --o-color: #9370db;
 }
 
 @theme inline {
@@ -14,13 +21,631 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #301934;
+    --foreground: #ff69b4;
+    --primary: #ff69b4;
+    --secondary: #cc5490;
+    --accent: #ff80bf;
+    --border: #ff69b4;
+    --board-bg: #4a2040;
+    --x-color: #ff1493;
+    --o-color: #9370db;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Courier New', Courier, monospace;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 20, 147, 0.05) 0px,
+    rgba(255, 20, 147, 0.05) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Retro Tic Tac Toe styling */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  position: relative;
+  padding: 0 1rem;
+}
+
+@media (max-width: 480px) {
+  .game-container {
+    gap: 0.6rem;
+  }
+}
+
+.status {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 0px rgba(255, 105, 180, 0.3);
+  padding: 0.5rem 1.5rem;
+  background-color: rgba(255, 105, 180, 0.1);
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  text-align: center;
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .status {
+    font-size: 1.25rem;
+    padding: 0.4rem 1rem;
+  }
+}
+
+.board-wrapper {
+  position: relative;
+  padding: 6px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--primary));
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.board {
+  background-color: var(--board-bg);
+  border: 4px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(255, 20, 147, 0.5),
+              inset 0px 0px 8px rgba(255, 255, 255, 0.5);
+  padding: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.board-row {
+  display: flex;
+}
+
+.square {
+  background: var(--background);
+  border: 2px solid var(--border);
+  font-size: 2.5rem;
+  font-weight: bold;
+  height: 80px;
+  width: 80px;
+  margin: 4px;
+  padding: 0;
+  text-align: center;
+  line-height: 80px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0px 0px 8px rgba(255, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .square {
+    height: 60px;
+    width: 60px;
+    font-size: 2rem;
+    line-height: 60px;
+    margin: 3px;
+  }
+}
+
+@media (max-width: 350px) {
+  .square {
+    height: 50px;
+    width: 50px;
+    font-size: 1.75rem;
+    line-height: 50px;
+    margin: 2px;
+  }
+}
+
+.square:hover {
+  background-color: var(--secondary);
+  transform: scale(1.05);
+}
+
+.square::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: radial-gradient(circle, transparent 60%, rgba(255, 20, 147, 0.3) 100%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: -1;
+}
+
+.square:hover::before {
+  opacity: 0.8;
+}
+
+.x-square {
+  color: var(--x-color);
+}
+
+.o-square {
+  color: var(--o-color);
+}
+
+.winning-square {
+  animation: pulse 1.5s infinite;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: var(--accent);
+  box-shadow: 0 0 15px var(--accent);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.reset-button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 1rem;
+  text-transform: uppercase;
+  box-shadow: 0px 4px 0px var(--accent),
+              0px 4px 10px rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+}
+
+@media (max-width: 480px) {
+  .reset-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.875rem;
+  }
+}
+
+.reset-button:hover {
+  background-color: var(--accent);
+  transform: translateY(2px);
+  box-shadow: 0px 2px 0px var(--accent),
+              0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.reset-button:active {
+  transform: translateY(4px);
+  box-shadow: 0px 0px 0px var(--accent),
+              0px 0px 0px rgba(0, 0, 0, 0.2);
+}
+
+.game-title {
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+  text-shadow: 3px 3px 0px rgba(255, 20, 147, 0.3),
+               -1px -1px 0px rgba(255, 255, 255, 0.8);
+  letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+  line-height: 1.1;
+}
+
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 2.25rem;
+    margin-bottom: 0.3rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .game-title {
+    font-size: 1.75rem;
+    margin-bottom: 0.2rem;
+  }
+}
+
+.game-title::after {
+  content: "SuccincTacToe";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  color: rgba(255, 105, 180, 0.3);
+  z-index: -1;
+}
+
+.retro-scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 100% 4px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.game-modes {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .game-modes {
+    gap: 0.3rem;
+  }
+}
+
+.mode-button {
+  background-color: var(--secondary);
+  color: white;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  box-shadow: 0px 3px 0px var(--accent),
+              0px 3px 6px rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+}
+
+@media (max-width: 480px) {
+  .mode-button {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+}
+
+.mode-button:hover {
+  background-color: var(--primary);
+  transform: translateY(1px);
+  box-shadow: 0px 2px 0px var(--accent),
+              0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.mode-button.active {
+  background-color: var(--accent);
+  box-shadow: 0px 1px 0px var(--accent),
+              0px 1px 3px rgba(0, 0, 0, 0.2);
+  transform: translateY(2px);
+}
+
+.mode-button:disabled,
+.player-button:disabled,
+.reset-button:disabled,
+.square:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.mode-button:disabled:hover,
+.player-button:disabled:hover,
+.reset-button:disabled:hover {
+  transform: none;
+  box-shadow: 0px 3px 0px var(--accent),
+              0px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.player-choice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: rgba(255, 105, 180, 0.1);
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .player-choice {
+    padding: 0.4rem 0.8rem;
+    gap: 0.4rem;
+  }
+  
+  .player-choice span {
+    font-size: 0.9rem;
+  }
+}
+
+.player-button {
+  width: 40px;
+  height: 40px;
+  background-color: var(--background);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0px 2px 0px var(--accent),
+              0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 480px) {
+  .player-button {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+}
+
+.player-button:hover {
+  background-color: var(--secondary);
+  transform: translateY(1px);
+  box-shadow: 0px 1px 0px var(--accent),
+              0px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.player-button.active {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0px 0px 0px var(--accent),
+              0px 0px 0px rgba(0, 0, 0, 0.2);
+  transform: translateY(2px);
+}
+
+.player-button.x-button {
+  color: var(--x-color);
+}
+
+.player-button.o-button {
+  color: var(--o-color);
+}
+
+/* Remove hover effects on touch devices for better mobile experience */
+@media (hover: none) {
+  .square:hover,
+  .mode-button:hover,
+  .player-button:hover,
+  .reset-button:hover {
+    transform: none;
+  }
+  
+  .square:hover::before {
+    opacity: 0;
+  }
+  
+  .square:active,
+  .mode-button:active,
+  .player-button:active,
+  .reset-button:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Status message animation for "Computer is thinking..." */
+@keyframes thinking {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+.status.thinking-status {
+  animation: thinking 1.5s infinite;
+}
+
+/* Stylish Footer */
+.footer {
+  width: 100%;
+  padding: 1.5rem 0;
+  text-align: center;
+  position: relative;
+  margin-top: 1.5rem;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 300px;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    var(--primary), 
+    var(--accent), 
+    var(--primary), 
+    transparent
+  );
+  border-radius: 3px;
+  filter: drop-shadow(0 0 2px var(--accent));
+}
+
+.footer::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: radial-gradient(ellipse at center, rgba(255, 20, 147, 0.2) 0%, transparent 70%);
+  opacity: 0.5;
+  z-index: -1;
+}
+
+.footer-text {
+  font-size: 1.1rem;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  background-image: linear-gradient(90deg, var(--accent), var(--primary), var(--accent));
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: textGradient 4s linear infinite;
+  text-shadow: 0px 0px 3px rgba(255, 105, 180, 0.2);
+  padding: 0.5rem 1rem;
+  display: inline-block;
+  position: relative;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.footer-text::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  z-index: -1;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.footer-text:hover::before {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.heart {
+  color: var(--accent);
+  font-size: 1.3rem;
+  display: inline-block;
+  animation: heartbeat 1.5s infinite;
+  transform-origin: center;
+  margin: 0 4px;
+  filter: drop-shadow(0 0 5px var(--accent));
+  position: relative;
+  top: 2px;
+}
+
+.author {
+  font-style: italic;
+  font-weight: bold;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  position: relative;
+  padding: 0 3px;
+}
+
+.author::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -2px;
+  right: -2px;
+  bottom: -4px;
+  background: radial-gradient(ellipse at center, rgba(255, 105, 180, 0.15) 0%, transparent 70%);
+  z-index: -1;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.author:hover::before {
+  opacity: 1;
+}
+
+.author::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.5s ease;
+  border-radius: 2px;
+}
+
+.footer-text:hover .author::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 1.2rem 0;
+  }
+  
+  .footer-text {
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+  }
+  
+  .heart {
+    font-size: 1.1rem;
+  }
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  15% { transform: scale(1.3); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.3); }
+  60% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes textGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
