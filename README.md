@@ -125,17 +125,3 @@ The game's appearance can be easily customized by modifying the CSS variables in
 ## 📝 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 💖 Acknowledgements
-
-- Made with love by [nomindart](https://github.com/0xNomind)
-- Inspired by classic arcade games and retro aesthetics
-- Built with Next.js and modern web technologies
-
----
-
-<div align="center">
-  <p>© 2023 SuccincTacToe. All rights reserved.</p>
-  <a href="https://github.com/0xNomind/succinctactoe">GitHub</a> •
-  <a href="https://0xNomind.github.io/succinctactoe">Live Demo</a>
-</div>
