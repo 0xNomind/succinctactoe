@@ -13,7 +13,7 @@
 </div>
 
 <p align="center">
-  <img src="https://via.placeholder.com/800x400/ff69b4/ffffff?text=SuccincTacToe" alt="SuccincTacToe Game Screenshot" style="border-radius: 10px; max-width: 100%;" />
+  <img src="./public/images/game-screenshot.png" alt="SuccincTacToe Game Screenshot" style="border-radius: 10px; max-width: 100%;" />
 </p>
 
 ## ✨ Features
